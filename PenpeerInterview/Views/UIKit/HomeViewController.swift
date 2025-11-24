@@ -9,11 +9,28 @@ import UIKit
 import SnapKit
 
 class HomeViewController: UIViewController {
-    
-    private let viewModel = HomeViewModel()
+
+    private let viewModel: HomeViewModel
+    private let favoriteRepository: FavoriteRepositoryProtocol
 
     // MARK: - Properties
     private var featuredPokemons: [Pokemon] = []
+
+    // MARK: - Initialization
+    init(
+        viewModel: HomeViewModel = HomeViewModel(),
+        favoriteRepository: FavoriteRepositoryProtocol = FavoriteRepository()
+    ) {
+        self.viewModel = viewModel
+        self.favoriteRepository = favoriteRepository
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        self.viewModel = HomeViewModel()
+        self.favoriteRepository = FavoriteRepository()
+        super.init(coder: coder)
+    }
 
     // MARK: - UI Components
     private lazy var scrollView: UIScrollView = {
@@ -39,38 +56,22 @@ class HomeViewController: UIViewController {
 
     private lazy var featuredCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createFeaturedLayout())
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.bounces = false // Disable bounce
+        collectionView.alwaysBounceVertical = false // Disable vertical bounce
         collectionView.register(FeaturedPokemonCell.self, forCellWithReuseIdentifier: FeaturedPokemonCell.reuseIdentifier)
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.layer.cornerRadius = 16
-        collectionView.clipsToBounds = true
         return collectionView
-    }()
-
-    private lazy var featuredContainerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.08
-        view.layer.shadowOffset = CGSize(width: 0, height: 2)
-        view.layer.shadowRadius = 8
-        view.layer.cornerRadius = 16
-        return view
     }()
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        loadMockData()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        Task {
-            await viewModel.getPokemon()
-        }
+        loadFeaturedPokemons()
     }
 
     // MARK: - Setup
@@ -94,22 +95,16 @@ class HomeViewController: UIViewController {
 
         // Add Featured Pokémon Section
         contentStackView.addArrangedSubview(featuredSectionHeader)
-        contentStackView.addArrangedSubview(featuredContainerView)
-
-        featuredContainerView.addSubview(featuredCollectionView)
+        contentStackView.addArrangedSubview(featuredCollectionView)
 
         featuredSectionHeader.snp.makeConstraints { make in
             make.height.equalTo(40)
             make.leading.trailing.equalToSuperview().inset(16)
         }
 
-        featuredContainerView.snp.makeConstraints { make in
-            make.height.equalTo(360) // Height for 3 rows
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
-
         featuredCollectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.height.equalTo(360) // Height for 3 rows
+            make.leading.trailing.equalToSuperview()
         }
 
         // TODO: Add Types Section
@@ -117,7 +112,7 @@ class HomeViewController: UIViewController {
     }
 
     private func createFeaturedLayout() -> UICollectionViewLayout {
-        // Item size - each row
+        // Item size - each row with white background
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .absolute(120)
@@ -125,8 +120,9 @@ class HomeViewController: UIViewController {
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         // Group size - 3 items vertically (one page)
+        // Use absolute width slightly less than container to show peek
         let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
+            widthDimension: .absolute(UIScreen.main.bounds.width - 64), // Leave space for peek
             heightDimension: .absolute(360) // 120 * 3 (no spacing between items)
         )
         let group = NSCollectionLayoutGroup.vertical(
@@ -136,30 +132,40 @@ class HomeViewController: UIViewController {
         )
         group.interItemSpacing = .fixed(0)
 
+        // Add background to the group
+        group.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPaging
-        section.interGroupSpacing = 0
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        section.interGroupSpacing = 12 // Space between pages
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
 
-        return UICollectionViewCompositionalLayout(section: section)
+        let layout = UICollectionViewCompositionalLayout(section: section)
+
+        return layout
     }
 
     // MARK: - Data
-    private func loadMockData() {
-        // Mock data for 9 featured Pokémon
-        featuredPokemons = [
-            Pokemon(id: 1, name: "BULBASAUR", types: [PokemonType(name: "grass"), PokemonType(name: "poison")], isFavorited: false),
-            Pokemon(id: 2, name: "IVYSAUR", types: [PokemonType(name: "grass"), PokemonType(name: "poison")], isFavorited: false),
-            Pokemon(id: 3, name: "VENUSAUR", types: [PokemonType(name: "grass"), PokemonType(name: "poison")], isFavorited: false),
-            Pokemon(id: 4, name: "CHARMANDER", types: [PokemonType(name: "fire")], isFavorited: false),
-            Pokemon(id: 5, name: "CHARMELEON", types: [PokemonType(name: "fire")], isFavorited: false),
-            Pokemon(id: 6, name: "CHARIZARD", types: [PokemonType(name: "fire"), PokemonType(name: "flying")], isFavorited: false),
-            Pokemon(id: 7, name: "SQUIRTLE", types: [PokemonType(name: "water")], isFavorited: false),
-            Pokemon(id: 8, name: "WARTORTLE", types: [PokemonType(name: "water")], isFavorited: false),
-            Pokemon(id: 9, name: "BLASTOISE", types: [PokemonType(name: "water")], isFavorited: false),
-        ]
-
-        featuredCollectionView.reloadData()
+    private func loadFeaturedPokemons() {
+        print("Starting to load featured pokemons...")
+        Task {
+            do {
+                featuredPokemons = try await viewModel.getFeaturedPokemons()
+                print("Successfully loaded \(featuredPokemons.count) pokemons")
+                await MainActor.run {
+                    print("Reloading collection view on main thread")
+                    featuredCollectionView.reloadData()
+                }
+            } catch {
+                print("Failed to load featured pokemons: \(error)")
+                if let networkError = error as? NetworkError {
+                    print("Network error details: \(networkError)")
+                }
+                await MainActor.run {
+                    // TODO: Show error message to user
+                }
+            }
+        }
     }
 
     // MARK: - Actions
@@ -170,10 +176,14 @@ class HomeViewController: UIViewController {
 
     private func toggleFavorite(for pokemonId: Int) {
         guard let index = featuredPokemons.firstIndex(where: { $0.id == pokemonId }) else { return }
-        featuredPokemons[index].isFavorited.toggle()
 
-        // TODO: Save to UserDefaults
-        print("Toggled favorite for Pokemon #\(pokemonId): \(featuredPokemons[index].isFavorited)")
+        // Toggle in FavoriteRepository and get new state
+        let newState = favoriteRepository.toggleFavorite(pokemonId: pokemonId)
+
+        // Update local data
+        featuredPokemons[index].isFavorited = newState
+
+        print("Toggled favorite for Pokemon #\(pokemonId): \(newState)")
 
         // Reload the specific cell
         let indexPath = IndexPath(item: index, section: 0)
@@ -184,19 +194,29 @@ class HomeViewController: UIViewController {
 // MARK: - UICollectionViewDataSource
 extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        print("numberOfItemsInSection called, returning: \(featuredPokemons.count)")
         return featuredPokemons.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        print("cellForItemAt called for index: \(indexPath.item)")
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: FeaturedPokemonCell.reuseIdentifier,
             for: indexPath
         ) as? FeaturedPokemonCell else {
+            print("Failed to dequeue FeaturedPokemonCell")
             return UICollectionViewCell()
         }
 
         let pokemon = featuredPokemons[indexPath.item]
-        cell.configure(with: pokemon)
+        print("Configuring cell with pokemon: \(pokemon.name)")
+
+        // Determine position in group (3 items per group/page)
+        let positionInGroup = indexPath.item % 3
+        let isFirst = (positionInGroup == 0)
+        let isLast = (positionInGroup == 2)
+
+        cell.configure(with: pokemon, isFirst: isFirst, isLast: isLast, favoriteRepository: favoriteRepository)
         cell.onFavoriteToggle = { [weak self] pokemonId in
             self?.toggleFavorite(for: pokemonId)
         }

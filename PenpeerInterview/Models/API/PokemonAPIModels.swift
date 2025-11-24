@@ -21,8 +21,10 @@ struct PokemonListItem: Decodable {
 
     var id: Int? {
         // Extract ID from URL: https://pokeapi.co/api/v2/pokemon/1/
-        let components = url.split(separator: "/")
-        guard let lastComponent = components.dropLast().last else { return nil }
+        // Remove trailing slash if exists
+        let cleanUrl = url.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        let components = cleanUrl.split(separator: "/")
+        guard let lastComponent = components.last else { return nil }
         return Int(lastComponent)
     }
 }

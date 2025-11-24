@@ -52,7 +52,7 @@ class SectionHeaderView: UIView {
         }
 
         seeMoreButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview()
+            make.trailing.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
         }
 

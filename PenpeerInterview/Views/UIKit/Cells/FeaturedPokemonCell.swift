@@ -82,6 +82,10 @@ class FeaturedPokemonCell: UICollectionViewCell {
         return imageView
     }()
 
+    // MARK: - Properties for shadow
+    private var isFirstCell: Bool = false
+    private var isLastCell: Bool = false
+
     // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -90,6 +94,25 @@ class FeaturedPokemonCell: UICollectionViewCell {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateShadowPath()
+    }
+
+    private func updateShadowPath() {
+        let shadowPath: UIBezierPath
+        if isFirstCell && isLastCell {
+            shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: 16)
+        } else if isFirstCell {
+            shadowPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 16, height: 16))
+        } else if isLastCell {
+            shadowPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: 16, height: 16))
+        } else {
+            shadowPath = UIBezierPath(rect: bounds)
+        }
+        contentView.layer.shadowPath = shadowPath.cgPath
     }
 
     // MARK: - Setup
@@ -135,15 +158,16 @@ class FeaturedPokemonCell: UICollectionViewCell {
             make.centerY.equalToSuperview()
             make.width.height.equalTo(70)
         }
+        largeImageView.isHidden = true // Hide the large image
 
         favoriteButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-8)
-            make.top.equalToSuperview().offset(8)
-            make.width.height.equalTo(30)
+            make.trailing.equalToSuperview().offset(-12)
+            make.centerY.equalToSuperview()
+            make.width.height.equalTo(40)
         }
 
         pokeballImageView.snp.makeConstraints { make in
-            make.trailing.equalTo(largeImageView.snp.leading).offset(-12)
+            make.trailing.equalTo(favoriteButton.snp.leading).offset(-12)
             make.centerY.equalToSuperview()
             make.width.height.equalTo(32)
         }
@@ -158,11 +182,59 @@ class FeaturedPokemonCell: UICollectionViewCell {
     }
 
     // MARK: - Configuration
-    func configure(with pokemon: Pokemon) {
+    func configure(with pokemon: Pokemon, isFirst: Bool, isLast: Bool, favoriteRepository: FavoriteRepositoryProtocol = FavoriteRepository()) {
         self.pokemonId = pokemon.id
         numberLabel.text = pokemon.formattedNumber
         nameLabel.text = pokemon.capitalizedName
-        favoriteButton.isSelected = pokemon.isFavorited
+
+        // Store position for shadow update
+        isFirstCell = isFirst
+        isLastCell = isLast
+
+        // Always read from FavoriteRepository to ensure latest state
+        favoriteButton.isSelected = favoriteRepository.isFavorited(pokemonId: pokemon.id)
+
+        // Configure rounded corners based on position
+        if isFirst && isLast {
+            // Only one item in group - all corners rounded
+            containerView.layer.cornerRadius = 16
+            containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        } else if isFirst {
+            // First item - top corners rounded
+            containerView.layer.cornerRadius = 16
+            containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        } else if isLast {
+            // Last item - bottom corners rounded
+            containerView.layer.cornerRadius = 16
+            containerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        } else {
+            // Middle item - no rounded corners
+            containerView.layer.cornerRadius = 0
+        }
+
+        containerView.clipsToBounds = true
+
+        // Add shadow to all cells in the group to create unified shadow
+        contentView.layer.shadowColor = UIColor.black.cgColor
+        contentView.layer.shadowOpacity = 0.08
+        contentView.layer.shadowOffset = CGSize(width: 0, height: 2)
+        contentView.layer.shadowRadius = 8
+        contentView.layer.masksToBounds = false
+
+        // Update shadow path
+        updateShadowPath()
+
+        // Load image for small imageView only
+        if let imageUrl = pokemon.imageUrl {
+            ImageLoader.shared.loadImage(from: imageUrl, into: smallImageView)
+        } else {
+            // Use sprite images as fallback
+            if let spriteUrl = pokemon.sprites?.frontDefault {
+                ImageLoader.shared.loadImage(from: spriteUrl, into: smallImageView)
+            } else {
+                smallImageView.image = nil
+            }
+        }
 
         // Clear previous type labels
         typeStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }

@@ -21,8 +21,9 @@ struct RegionListItem: Decodable {
 
     var id: Int? {
         // Extract ID from URL
-        let components = url.split(separator: "/")
-        guard let lastComponent = components.dropLast().last else { return nil }
+        let cleanUrl = url.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        let components = cleanUrl.split(separator: "/")
+        guard let lastComponent = components.last else { return nil }
         return Int(lastComponent)
     }
 }
