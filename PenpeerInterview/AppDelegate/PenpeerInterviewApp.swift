@@ -11,7 +11,19 @@ import SwiftUI
 struct PenpeerInterviewApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeViewControllerWrapper()
         }
+    }
+}
+
+struct HomeViewControllerWrapper: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UINavigationController {
+        let homeViewController = HomeViewController()
+        let navigationController = UINavigationController(rootViewController: homeViewController)
+        return navigationController
+    }
+
+    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {
+        // No update needed
     }
 }
