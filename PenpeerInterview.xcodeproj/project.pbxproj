@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EF47B9AF2ED5D909001D5E19 /* Pokemon in Frameworks */ = {isa = PBXBuildFile; productRef = EF47B9AE2ED5D909001D5E19 /* Pokemon */; };
 		EF552F232ED42F290040A583 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EF552F222ED42F290040A583 /* SnapKit */; };
 		EF552F252ED42F2E0040A583 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = EF552F242ED42F2E0040A583 /* Moya */; };
 /* End PBXBuildFile section */
@@ -22,6 +23,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EF47B9AC2ED5D7C2001D5E19 /* Pokemon */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Pokemon; sourceTree = "<group>"; };
 		EF552E402ED426FC0040A583 /* PenpeerInterview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PenpeerInterview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF552E4D2ED426FD0040A583 /* PenpeerInterviewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PenpeerInterviewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -44,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF47B9AF2ED5D909001D5E19 /* Pokemon in Frameworks */,
 				EF552F252ED42F2E0040A583 /* Moya in Frameworks */,
 				EF552F232ED42F290040A583 /* SnapKit in Frameworks */,
 			);
@@ -59,11 +62,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EF47B9AD2ED5D909001D5E19 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		EF552E372ED426FC0040A583 = {
 			isa = PBXGroup;
 			children = (
+				EF47B9AC2ED5D7C2001D5E19 /* Pokemon */,
 				EF552E422ED426FC0040A583 /* App */,
 				EF552E502ED426FD0040A583 /* AppTests */,
+				EF47B9AD2ED5D909001D5E19 /* Frameworks */,
 				EF552E412ED426FC0040A583 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -99,6 +111,7 @@
 			packageProductDependencies = (
 				EF552F222ED42F290040A583 /* SnapKit */,
 				EF552F242ED42F2E0040A583 /* Moya */,
+				EF47B9AE2ED5D909001D5E19 /* Pokemon */,
 			);
 			productName = PenpeerInterview;
 			productReference = EF552E402ED426FC0040A583 /* PenpeerInterview.app */;
@@ -496,6 +509,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		EF47B9AE2ED5D909001D5E19 /* Pokemon */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Pokemon;
+		};
 		EF552F222ED42F290040A583 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EF552F1F2ED42EEF0040A583 /* XCRemoteSwiftPackageReference "SnapKit" */;

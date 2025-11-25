@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Pokemon
 
 @main
 struct PenpeerInterviewApp: App {
