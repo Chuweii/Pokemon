@@ -9,9 +9,21 @@ import SwiftUI
 
 @main
 struct PenpeerInterviewApp: App {
+    init() {
+        // Configure navigation bar appearance
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .appBackground
+        appearance.shadowColor = .clear // Remove the separator line
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    }
+
     var body: some Scene {
         WindowGroup {
             HomeViewControllerWrapper()
+                .background(Color(red: 0.95, green: 0.95, blue: 0.97)) // #F2F2F7
+                .ignoresSafeArea()
         }
     }
 }

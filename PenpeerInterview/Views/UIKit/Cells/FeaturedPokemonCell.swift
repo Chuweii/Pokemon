@@ -96,24 +96,6 @@ class FeaturedPokemonCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        updateShadowPath()
-    }
-
-    private func updateShadowPath() {
-        let shadowPath: UIBezierPath
-        if isFirstCell && isLastCell {
-            shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: 16)
-        } else if isFirstCell {
-            shadowPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 16, height: 16))
-        } else if isLastCell {
-            shadowPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: 16, height: 16))
-        } else {
-            shadowPath = UIBezierPath(rect: bounds)
-        }
-        contentView.layer.shadowPath = shadowPath.cgPath
-    }
 
     // MARK: - Setup
     private func setupUI() {
@@ -213,16 +195,6 @@ class FeaturedPokemonCell: UICollectionViewCell {
         }
 
         containerView.clipsToBounds = true
-
-        // Add shadow to all cells in the group to create unified shadow
-        contentView.layer.shadowColor = UIColor.black.cgColor
-        contentView.layer.shadowOpacity = 0.08
-        contentView.layer.shadowOffset = CGSize(width: 0, height: 2)
-        contentView.layer.shadowRadius = 8
-        contentView.layer.masksToBounds = false
-
-        // Update shadow path
-        updateShadowPath()
 
         // Load image for small imageView only
         if let imageUrl = pokemon.imageUrl {

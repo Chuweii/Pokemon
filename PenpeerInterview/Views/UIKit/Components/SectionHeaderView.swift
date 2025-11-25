@@ -52,8 +52,9 @@ class SectionHeaderView: UIView {
         }
 
         seeMoreButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview()
             make.centerY.equalToSuperview()
+            make.width.greaterThanOrEqualTo(80) // Ensure consistent button width
         }
 
         seeMoreButton.addTarget(self, action: #selector(seeMoreButtonTapped), for: .touchUpInside)

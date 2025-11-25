@@ -42,4 +42,33 @@ class HomeViewModel {
 
         return pokemons
     }
+
+    func getTypes() async throws -> [String] {
+        // Get all types
+        let typeResponse = try await pokeAPIRepository.getTypeList(limit: 100, offset: 0)
+        return typeResponse.results.map { $0.name }
+    }
+
+    func getRegions() async throws -> [Region] {
+        // Get first 6 regions
+        let regionListResponse = try await pokeAPIRepository.getRegionList()
+        let firstSixRegions = Array(regionListResponse.results.prefix(6))
+
+        // Fetch details for each region
+        var regions: [Region] = []
+
+        for item in firstSixRegions {
+            guard let id = item.id else { continue }
+
+            do {
+                let detail = try await pokeAPIRepository.getRegionDetail(id: id)
+                let region = Region(from: detail)
+                regions.append(region)
+            } catch {
+                print("Failed to fetch region \(id): \(error)")
+            }
+        }
+
+        return regions
+    }
 }
