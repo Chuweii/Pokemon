@@ -11,38 +11,47 @@ import Moya
 
 
 class FakeFavoriteStorageRepository: FavoriteStorageRepositoryProtocol {
-    var getFavoritePokemonIdsResult: Result<Set<Int>, MoyaError> = .failure(MoyaError.requestMapping(""))
-    var isFavoritedResult: Result<Bool, MoyaError> = .failure(MoyaError.requestMapping(""))
-    var addFavoriteResult: Result<Any?, MoyaError> = .failure(MoyaError.requestMapping(""))
-    var removeFavoriteResult: Result<Any?, MoyaError> = .failure(MoyaError.requestMapping(""))
-    var toggleFavoriteResult: Result<Bool, MoyaError> = .failure(MoyaError.requestMapping(""))
-    
     var didCallGetFavoritePokemonIds: Bool = false
     var didCallIsFavorited: Bool = false
     var didCallAddFavorite: Bool = false
     var didCallRemoveFavorite: Bool = false
     var didCallToggleFavorite: Bool = false
     
+    var favorites: Set<Int>
+    
+    // Initialize with optional predefined favorites
+    init(initialFavorites: Set<Int> = []) {
+        self.favorites = initialFavorites
+    }
+    
     func getFavoritePokemonIds() -> Set<Int> {
         didCallGetFavoritePokemonIds = true
-        return .init(1...5)
+        return favorites
     }
     
     func isFavorited(pokemonId: Int) -> Bool {
         didCallIsFavorited = true
-        return true
+        return favorites.contains(pokemonId)
     }
-    
+
     func addFavorite(pokemonId: Int) {
         didCallAddFavorite = true
+        favorites.insert(pokemonId)
     }
-    
+
     func removeFavorite(pokemonId: Int) {
         didCallRemoveFavorite = true
+        favorites.remove(pokemonId)
     }
-    
+
     func toggleFavorite(pokemonId: Int) -> Bool {
         didCallToggleFavorite = true
-        return true
+        if favorites.contains(pokemonId) {
+            favorites.remove(pokemonId)
+            return false
+        } else {
+            favorites.insert(pokemonId)
+            return true
+        }
     }
 }

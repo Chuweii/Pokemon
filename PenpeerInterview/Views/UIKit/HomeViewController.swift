@@ -399,7 +399,7 @@ extension HomeViewController: UICollectionViewDelegate {
         if collectionView.tag == 1 {
             let pokemon = viewModel.featuredPokemons[indexPath.item]
             print("Selected Pokemon: \(pokemon.name)")
-            // TODO: Navigate to detail page
+            viewModel.didClickPokemonItems()
         }
     }
 }
