@@ -57,7 +57,6 @@ class FeaturedPokemonCell: UICollectionViewCell {
     private let pokeballImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        // TODO: Replace with actual pokeball image
         imageView.backgroundColor = .clear
         imageView.isHidden = true // Hide until we have actual image
         return imageView
@@ -65,11 +64,9 @@ class FeaturedPokemonCell: UICollectionViewCell {
 
     private let favoriteButton: UIButton = {
         let button = UIButton(type: .custom)
-        // Create a larger touch area
         let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
-        button.setImage(UIImage(systemName: "star", withConfiguration: config), for: .normal)
-        button.setImage(UIImage(systemName: "star.fill", withConfiguration: config), for: .selected)
-        button.tintColor = .systemYellow
+        button.setImage(UIImage(named: "unfavorite_icon", in: nil, with: config), for: .normal)
+        button.setImage(UIImage(named: "isfavorite_icon", in: nil, with: config), for: .selected)
         return button
     }()
 
@@ -143,9 +140,9 @@ class FeaturedPokemonCell: UICollectionViewCell {
         largeImageView.isHidden = true // Hide the large image
 
         favoriteButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-12)
+            make.trailing.equalToSuperview().offset(-20)
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(40)
+            make.width.height.equalTo(30)
         }
 
         pokeballImageView.snp.makeConstraints { make in
