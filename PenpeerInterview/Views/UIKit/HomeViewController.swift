@@ -7,123 +7,80 @@
 
 import UIKit
 import SnapKit
+import Combine
 
 class HomeViewController: UIViewController {
 
     private let viewModel: HomeViewModel
-    private let favoriteRepository: FavoriteRepositoryProtocol
+    private var cancellables = Set<AnyCancellable>()
 
-    // MARK: - Properties
-    private var featuredPokemons: [Pokemon] = []
-    private var types: [String] = []
-    private var regions: [Region] = []
-
-    // MARK: - Initialization
-    init(
-        viewModel: HomeViewModel = HomeViewModel(),
-        favoriteRepository: FavoriteRepositoryProtocol = FavoriteRepository()
-    ) {
+    // MARK: - Init
+    init(viewModel: HomeViewModel = HomeViewModel()) {
         self.viewModel = viewModel
-        self.favoriteRepository = favoriteRepository
         super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
         self.viewModel = HomeViewModel()
-        self.favoriteRepository = FavoriteRepository()
         super.init(coder: coder)
     }
-
-    // MARK: - UI Components
-    private lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.showsVerticalScrollIndicator = true
-        scrollView.contentInsetAdjustmentBehavior = .never
-        return scrollView
-    }()
-
-    private lazy var contentStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 16
-        stackView.backgroundColor = .appBackground
-        return stackView
-    }()
-
-    private lazy var featuredSectionHeader: SectionHeaderView = {
-        let header = SectionHeaderView(title: "Featured Pokémon", showSeeMore: true)
-        header.onSeeMoreTapped = { [weak self] in
-            self?.handleSeeMoreTapped()
-        }
-        return header
-    }()
-
-    private lazy var featuredCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createFeaturedLayout())
-        collectionView.backgroundColor = .appBackground
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.bounces = false // Disable bounce
-        collectionView.alwaysBounceVertical = false // Disable vertical bounce
-        collectionView.register(FeaturedPokemonCell.self, forCellWithReuseIdentifier: FeaturedPokemonCell.reuseIdentifier)
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.tag = 1 // Tag to identify in delegate
-        return collectionView
-    }()
-
-    private lazy var typesSectionHeader: SectionHeaderView = {
-        let header = SectionHeaderView(title: "Types", showSeeMore: true)
-        header.onSeeMoreTapped = { [weak self] in
-            self?.handleTypesSeeMoreTapped()
-        }
-        return header
-    }()
-
-    private lazy var typesCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createTypesLayout())
-        collectionView.backgroundColor = .appBackground
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.bounces = false // Disable bounce
-        collectionView.alwaysBounceVertical = false // Disable vertical bounce
-        collectionView.alwaysBounceHorizontal = true // Enable horizontal bounce
-        collectionView.register(TypeCell.self, forCellWithReuseIdentifier: TypeCell.reuseIdentifier)
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.tag = 2 // Tag to identify in delegate
-        return collectionView
-    }()
-
-    private lazy var regionsSectionHeader: SectionHeaderView = {
-        let header = SectionHeaderView(title: "Regions", showSeeMore: true)
-        header.onSeeMoreTapped = { [weak self] in
-            self?.handleRegionsSeeMoreTapped()
-        }
-        return header
-    }()
-
-    private lazy var regionsCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createRegionsLayout())
-        collectionView.backgroundColor = .appBackground
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.isScrollEnabled = false // Disable scrolling for static display
-        collectionView.register(RegionCell.self, forCellWithReuseIdentifier: RegionCell.reuseIdentifier)
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.tag = 3 // Tag to identify in delegate
-        return collectionView
-    }()
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        loadFeaturedPokemons()
-        loadTypes()
-        loadRegions()
+        setupBinding()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        Task {
+            await viewModel.loadAllData()
+        }
+    }
+    
+    // MARK: - Bindings
+    private func setupBinding() {
+        viewModel.$featuredPokemons
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] pokemons in
+                guard let self = self else { return }
+
+                // For initial load or when count changes, reload all
+                if self.featuredCollectionView.numberOfItems(inSection: 0) != pokemons.count {
+                    self.featuredCollectionView.reloadData()
+                } else {
+                    // For favorite toggle, find and reload only changed cells
+                    let visibleIndexPaths = self.featuredCollectionView.indexPathsForVisibleItems
+                    self.featuredCollectionView.reloadItems(at: visibleIndexPaths)
+                }
+            }
+            .store(in: &cancellables)
+
+        viewModel.$types
+            .receive(on: DispatchQueue.main)
+            .dropFirst()
+            .sink { [weak self] _ in
+                self?.typesCollectionView.reloadData()
+            }
+            .store(in: &cancellables)
+
+        viewModel.$regions
+            .receive(on: DispatchQueue.main)
+            .dropFirst()
+            .sink { [weak self] _ in
+                self?.regionsCollectionView.reloadData()
+            }
+            .store(in: &cancellables)
+
+        viewModel.$errorMessage
+            .receive(on: DispatchQueue.main)
+            .compactMap { $0 }
+            .sink { errorMessage in
+                print("Error: \(errorMessage)")
+            }
+            .store(in: &cancellables)
+    }
+
 
     // MARK: - Setup
     private func setupUI() {
@@ -147,6 +104,7 @@ class HomeViewController: UIViewController {
             make.width.equalTo(scrollView.snp.width)
         }
         
+        // Add Space View
         let spaceView = UIView()
         spaceView.backgroundColor = .clear
     
@@ -201,7 +159,8 @@ class HomeViewController: UIViewController {
             make.leading.trailing.equalToSuperview()
         }
     }
-
+    
+    // MARK: - UICollectionViewLayout
     private func createFeaturedLayout() -> UICollectionViewLayout {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -280,91 +239,88 @@ class HomeViewController: UIViewController {
 
         return UICollectionViewCompositionalLayout(section: section)
     }
+    
+    // MARK: - UI Components
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.contentInsetAdjustmentBehavior = .never
+        return scrollView
+    }()
 
-    // MARK: - Data
-    private func loadFeaturedPokemons() {
-        print("Starting to load featured pokemons...")
-        Task {
-            do {
-                featuredPokemons = try await viewModel.getFeaturedPokemons()
-                print("Successfully loaded \(featuredPokemons.count) pokemons")
-                await MainActor.run {
-                    print("Reloading collection view on main thread")
-                    featuredCollectionView.reloadData()
-                }
-            } catch {
-                print("Failed to load featured pokemons: \(error)")
-                if let networkError = error as? NetworkError {
-                    print("Network error details: \(networkError)")
-                }
-                await MainActor.run {
-                    // TODO: Show error message to user
-                }
-            }
+    private lazy var contentStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        stackView.backgroundColor = .appBackground
+        return stackView
+    }()
+
+    private lazy var featuredSectionHeader: SectionHeaderView = {
+        let header = SectionHeaderView(title: "Featured Pokémon", showSeeMore: true)
+        header.onSeeMoreTapped = { [weak self] in
+            self?.viewModel.didClickFeaturedSeeMoreButton()
         }
-    }
+        return header
+    }()
 
-    private func loadTypes() {
-        print("Starting to load types...")
-        Task {
-            do {
-                types = try await viewModel.getTypes()
-                print("Successfully loaded \(types.count) types")
-                await MainActor.run {
-                    typesCollectionView.reloadData()
-                }
-            } catch {
-                print("Failed to load types: \(error)")
-            }
+    private lazy var featuredCollectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createFeaturedLayout())
+        collectionView.backgroundColor = .appBackground
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.bounces = false
+        collectionView.alwaysBounceVertical = false
+        collectionView.register(FeaturedPokemonCell.self, forCellWithReuseIdentifier: FeaturedPokemonCell.reuseIdentifier)
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.tag = 1
+        return collectionView
+    }()
+
+    private lazy var typesSectionHeader: SectionHeaderView = {
+        let header = SectionHeaderView(title: "Types", showSeeMore: true)
+        header.onSeeMoreTapped = { [weak self] in
+            self?.viewModel.didClickTypesSeeMoreButton()
         }
-    }
+        return header
+    }()
 
-    private func loadRegions() {
-        print("Starting to load regions...")
-        Task {
-            do {
-                regions = try await viewModel.getRegions()
-                print("Successfully loaded \(regions.count) regions")
-                await MainActor.run {
-                    regionsCollectionView.reloadData()
-                }
-            } catch {
-                print("Failed to load regions: \(error)")
-            }
+    private lazy var typesCollectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createTypesLayout())
+        collectionView.backgroundColor = .appBackground
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.bounces = false
+        collectionView.alwaysBounceVertical = false
+        collectionView.alwaysBounceHorizontal = true
+        collectionView.register(TypeCell.self, forCellWithReuseIdentifier: TypeCell.reuseIdentifier)
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.tag = 2
+        return collectionView
+    }()
+
+    private lazy var regionsSectionHeader: SectionHeaderView = {
+        let header = SectionHeaderView(title: "Regions", showSeeMore: true)
+        header.onSeeMoreTapped = { [weak self] in
+            self?.viewModel.didClickRegionsSeeMoreButton()
         }
-    }
+        return header
+    }()
 
-    // MARK: - Actions
-    private func handleSeeMoreTapped() {
-        print("See more tapped - Navigate to list page")
-        // TODO: Navigate to SwiftUI list page
-    }
-
-    private func handleTypesSeeMoreTapped() {
-        print("Types see more tapped")
-        // TODO: Navigate to types page
-    }
-
-    private func handleRegionsSeeMoreTapped() {
-        print("Regions see more tapped")
-        // TODO: Navigate to regions page
-    }
-
-    private func toggleFavorite(for pokemonId: Int) {
-        guard let index = featuredPokemons.firstIndex(where: { $0.id == pokemonId }) else { return }
-
-        // Toggle in FavoriteRepository and get new state
-        let newState = favoriteRepository.toggleFavorite(pokemonId: pokemonId)
-
-        // Update local data
-        featuredPokemons[index].isFavorited = newState
-
-        print("Toggled favorite for Pokemon #\(pokemonId): \(newState)")
-
-        // Reload the specific cell
-        let indexPath = IndexPath(item: index, section: 0)
-        featuredCollectionView.reloadItems(at: [indexPath])
-    }
+    private lazy var regionsCollectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createRegionsLayout())
+        collectionView.backgroundColor = .appBackground
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.isScrollEnabled = false
+        collectionView.register(RegionCell.self, forCellWithReuseIdentifier: RegionCell.reuseIdentifier)
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.tag = 3
+        return collectionView
+    }()
 }
 
 // MARK: - UICollectionViewDataSource
@@ -372,13 +328,13 @@ extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView.tag == 1 {
             // Featured Pokemon
-            return featuredPokemons.count
+            return viewModel.featuredPokemons.count
         } else if collectionView.tag == 2 {
             // Types
-            return types.count
+            return viewModel.types.count
         } else if collectionView.tag == 3 {
             // Regions
-            return regions.count
+            return viewModel.regions.count
         }
         return 0
     }
@@ -393,16 +349,15 @@ extension HomeViewController: UICollectionViewDataSource {
                 return UICollectionViewCell()
             }
 
-            let pokemon = featuredPokemons[indexPath.item]
+            let pokemon = viewModel.featuredPokemons[indexPath.item]
 
-            // Determine position in group (3 items per group/page)
             let positionInGroup = indexPath.item % 3
             let isFirst = (positionInGroup == 0)
             let isLast = (positionInGroup == 2)
 
-            cell.configure(with: pokemon, isFirst: isFirst, isLast: isLast, favoriteRepository: favoriteRepository)
+            cell.configure(with: pokemon, isFirst: isFirst, isLast: isLast)
             cell.onFavoriteToggle = { [weak self] pokemonId in
-                self?.toggleFavorite(for: pokemonId)
+                self?.viewModel.didClickFavoriteButton(for: pokemonId)
             }
 
             return cell
@@ -415,7 +370,7 @@ extension HomeViewController: UICollectionViewDataSource {
                 return UICollectionViewCell()
             }
 
-            let typeName = types[indexPath.item]
+            let typeName = viewModel.types[indexPath.item]
             cell.configure(with: typeName)
 
             return cell
@@ -428,7 +383,7 @@ extension HomeViewController: UICollectionViewDataSource {
                 return UICollectionViewCell()
             }
 
-            let region = regions[indexPath.item]
+            let region = viewModel.regions[indexPath.item]
             cell.configure(with: region)
 
             return cell
@@ -441,8 +396,10 @@ extension HomeViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let pokemon = featuredPokemons[indexPath.item]
-        print("Selected Pokemon: \(pokemon.name)")
-        // TODO: Navigate to detail page
+        if collectionView.tag == 1 {
+            let pokemon = viewModel.featuredPokemons[indexPath.item]
+            print("Selected Pokemon: \(pokemon.name)")
+            // TODO: Navigate to detail page
+        }
     }
 }

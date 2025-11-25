@@ -164,7 +164,7 @@ class FeaturedPokemonCell: UICollectionViewCell {
     }
 
     // MARK: - Configuration
-    func configure(with pokemon: Pokemon, isFirst: Bool, isLast: Bool, favoriteRepository: FavoriteRepositoryProtocol = FavoriteRepository()) {
+    func configure(with pokemon: Pokemon, isFirst: Bool, isLast: Bool) {
         self.pokemonId = pokemon.id
         numberLabel.text = pokemon.formattedNumber
         nameLabel.text = pokemon.capitalizedName
@@ -173,8 +173,8 @@ class FeaturedPokemonCell: UICollectionViewCell {
         isFirstCell = isFirst
         isLastCell = isLast
 
-        // Always read from FavoriteRepository to ensure latest state
-        favoriteButton.isSelected = favoriteRepository.isFavorited(pokemonId: pokemon.id)
+        // Use Pokemon's isFavorited state
+        favoriteButton.isSelected = pokemon.isFavorited
 
         // Configure rounded corners based on position
         if isFirst && isLast {

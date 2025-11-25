@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol FavoriteRepositoryProtocol {
+protocol FavoriteStorageRepositoryProtocol {
     func getFavoritePokemonIds() -> Set<Int>
     func isFavorited(pokemonId: Int) -> Bool
     func addFavorite(pokemonId: Int)
@@ -15,7 +15,9 @@ protocol FavoriteRepositoryProtocol {
     func toggleFavorite(pokemonId: Int) -> Bool
 }
 
-class FavoriteRepository: FavoriteRepositoryProtocol {
+class FavoriteStorageRepository: FavoriteStorageRepositoryProtocol {
+
+    static let shared = FavoriteStorageRepository()
 
     private let storage: FavoriteStorageProtocol
 
