@@ -9,7 +9,7 @@ import Foundation
 
 protocol FavoriteStorageRepositoryProtocol {
     func getFavoritePokemonIds() -> Set<Int>
-    func isFavorited(pokemonId: Int) -> Bool
+    func isFavorited(pokemonID: Int) -> Bool
     func addFavorite(pokemonId: Int)
     func removeFavorite(pokemonId: Int)
     func toggleFavorite(pokemonId: Int) -> Bool
@@ -29,8 +29,8 @@ class FavoriteStorageRepository: FavoriteStorageRepositoryProtocol {
         return storage.getFavoritePokemonIds()
     }
 
-    func isFavorited(pokemonId: Int) -> Bool {
-        return storage.isFavorited(pokemonId: pokemonId)
+    func isFavorited(pokemonID: Int) -> Bool {
+        return storage.isFavorited(pokemonId: pokemonID)
     }
 
     func addFavorite(pokemonId: Int) {

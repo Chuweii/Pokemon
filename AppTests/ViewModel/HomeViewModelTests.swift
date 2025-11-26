@@ -110,13 +110,13 @@ struct HomeViewModelTests {
 
         // Then - Verify that the initial state is not marked as favorited
         await #expect(viewModel.featuredPokemons.first?.isFavorited == false)
-        #expect(favoriteRepository.isFavorited(pokemonId: 1) == false)
+        #expect(favoriteRepository.isFavorited(pokemonID: 1) == false)
 
         // When
         await viewModel.didClickFavoriteButton(for: 1)
 
         // Then
-        #expect(favoriteRepository.isFavorited(pokemonId: 1) == true)
+        #expect(favoriteRepository.isFavorited(pokemonID: 1) == true)
         await #expect(viewModel.featuredPokemons.first?.isFavorited == true)
         #expect(favoriteRepository.didCallToggleFavorite == true)
     }
@@ -137,13 +137,13 @@ struct HomeViewModelTests {
 
         // Then - Verify that the initial state is marked as favorited
         await #expect(viewModel.featuredPokemons.first?.isFavorited == true)
-        #expect(favoriteRepository.isFavorited(pokemonId: 1) == true)
+        #expect(favoriteRepository.isFavorited(pokemonID: 1) == true)
 
         // When
         await viewModel.didClickFavoriteButton(for: 1)
 
         // Then
-        #expect(favoriteRepository.isFavorited(pokemonId: 1) == false)
+        #expect(favoriteRepository.isFavorited(pokemonID: 1) == false)
         await #expect(viewModel.featuredPokemons.first?.isFavorited == false)
         #expect(favoriteRepository.didCallToggleFavorite == true)
     }

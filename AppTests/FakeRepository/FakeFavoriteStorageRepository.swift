@@ -29,9 +29,9 @@ class FakeFavoriteStorageRepository: FavoriteStorageRepositoryProtocol {
         return favorites
     }
     
-    func isFavorited(pokemonId: Int) -> Bool {
+    func isFavorited(pokemonID: Int) -> Bool {
         didCallIsFavorited = true
-        return favorites.contains(pokemonId)
+        return favorites.contains(pokemonID)
     }
 
     func addFavorite(pokemonId: Int) {

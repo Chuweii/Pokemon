@@ -54,7 +54,7 @@ class HomeViewModel {
                 do {
                     let detail = try await pokeAPIRepository.getPokemonDetail(id: id)
                     // Check if this Pokemon is favorited
-                    let isFavorited = favoriteRepository.isFavorited(pokemonId: id)
+                    let isFavorited = favoriteRepository.isFavorited(pokemonID: id)
                     let pokemon = Pokemon(from: detail, isFavorited: isFavorited)
                     pokemons.append(pokemon)
                 } catch {
@@ -112,7 +112,6 @@ class HomeViewModel {
         shouldShowPokemonListView = true
     }
     
-    
     func didClickTypesSeeMoreButton() {
         print("Types see more tapped")
     }
@@ -144,13 +143,13 @@ class HomeViewModel {
     }
 
     private func isFavorited(pokemonId: Int) -> Bool {
-        return favoriteRepository.isFavorited(pokemonId: pokemonId)
+        return favoriteRepository.isFavorited(pokemonID: pokemonId)
     }
 
     func refreshFavoriteStatus() {
         for index in featuredPokemons.indices {
             let pokemonId = featuredPokemons[index].id
-            let isFavorited = favoriteRepository.isFavorited(pokemonId: pokemonId)
+            let isFavorited = favoriteRepository.isFavorited(pokemonID: pokemonId)
             featuredPokemons[index].isFavorited = isFavorited
         }
     }

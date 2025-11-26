@@ -26,7 +26,7 @@ class PokemonDetailViewModel: ObservableObject {
 
     @MainActor
     func refreshFavoriteStatus() {
-        let isFavorited = favoriteRepository.isFavorited(pokemonId: pokemon.id)
+        let isFavorited = favoriteRepository.isFavorited(pokemonID: pokemon.id)
         pokemon.isFavorited = isFavorited
     }
 

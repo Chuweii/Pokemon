@@ -95,6 +95,16 @@ class HomeViewController: UIViewController {
                 self?.viewModel.shouldShowPokemonDetailView = false
             }
             .store(in: &cancellables)
+
+        viewModel.$shouldShowPokemonListView
+            .filter { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                let pokemonListView = UIHostingController(rootView: PokemonListView())
+                self?.navigationController?.pushViewController(pokemonListView, animated: true)
+                self?.viewModel.shouldShowPokemonListView = false
+            }
+            .store(in: &cancellables)
     }
 
 
