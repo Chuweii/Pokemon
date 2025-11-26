@@ -17,6 +17,14 @@ let package = Package(
         .package(
             url: "https://github.com/pointfreeco/swift-composable-architecture",
             exact: "1.17.0"
+        ),
+        .package(
+            url: "https://github.com/Alamofire/Alamofire.git",
+            exact: "5.8.0"
+        ),
+        .package(
+            url: "https://github.com/Moya/Moya.git",
+            exact: "15.0.3"
         )
     ],
     targets: [
@@ -25,12 +33,18 @@ let package = Package(
         .target(
             name: "Pokemon",
             dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "Alamofire", package: "Alamofire"),
+                .product(name: "Moya", package: "Moya")
             ]
         ),
         .testTarget(
             name: "PokemonTests",
-            dependencies: ["Pokemon"]
+            dependencies: [
+                "Pokemon",
+                .product(name: "Alamofire", package: "Alamofire"),
+                .product(name: "Moya", package: "Moya")
+            ]
         ),
     ]
 )

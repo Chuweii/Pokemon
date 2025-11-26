@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Pokemon
 import Moya
 @testable import PenpeerInterview
 

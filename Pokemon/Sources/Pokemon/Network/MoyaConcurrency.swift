@@ -21,19 +21,15 @@ extension MoyaProvider {
             self.provider = provider
         }
 
-        func request<T: Decodable>(_ target: Target) async throws -> T {
+        func request<T: Decodable & Sendable>(_ target: Target) async throws -> T {
             try await withCheckedThrowingContinuation { continuation in
                 provider.request(target) { result in
                     switch result {
                     case .success(let response):
-                        do {
-                            let decodedResponse = try JSONDecoder().decode(T.self, from: response.data)
-                            continuation.resume(returning: decodedResponse)
-                        } 
-                        catch {
-                            let customError = NetworkError.customError(.decodingError)
-                            continuation.resume(throwing: customError)
-                        }
+                        continuation.resume(with: Result {
+                            try JSONDecoder().decode(T.self, from: response.data)
+                        })
+
                     case .failure(let error):
                         continuation.resume(throwing: NetworkError.moyaError(error))
                     }

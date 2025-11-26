@@ -7,16 +7,16 @@
 
 import Foundation
 
-struct Region {
-    let id: Int
-    let name: String
-    let locationCount: Int
+public struct Region {
+    public let id: Int
+    public let name: String
+    public let locationCount: Int
 
-    var capitalizedName: String {
+    public var capitalizedName: String {
         return name.prefix(1).uppercased() + name.dropFirst()
     }
 
-    init(from response: RegionDetailResponse) {
+    public init(from response: RegionDetailResponse) {
         self.id = response.id
         self.name = response.name
         self.locationCount = response.locations.count

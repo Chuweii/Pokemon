@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Pokemon
 
 class HomeViewModel {
     // MARK: - Publishers

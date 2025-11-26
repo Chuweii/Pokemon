@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EF3904C22ED5F7B70069ABF8 /* Pokemon in Frameworks */ = {isa = PBXBuildFile; productRef = EF3904C12ED5F7B70069ABF8 /* Pokemon */; };
+		EF3904CA2ED604A30069ABF8 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = EF3904C92ED604A30069ABF8 /* Moya */; };
 		EF47B9AF2ED5D909001D5E19 /* Pokemon in Frameworks */ = {isa = PBXBuildFile; productRef = EF47B9AE2ED5D909001D5E19 /* Pokemon */; };
 		EF552F232ED42F290040A583 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EF552F222ED42F290040A583 /* SnapKit */; };
-		EF552F252ED42F2E0040A583 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = EF552F242ED42F2E0040A583 /* Moya */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,7 +48,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF47B9AF2ED5D909001D5E19 /* Pokemon in Frameworks */,
-				EF552F252ED42F2E0040A583 /* Moya in Frameworks */,
 				EF552F232ED42F290040A583 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -56,6 +56,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF3904CA2ED604A30069ABF8 /* Moya in Frameworks */,
+				EF3904C22ED5F7B70069ABF8 /* Pokemon in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,7 +112,6 @@
 			name = PenpeerInterview;
 			packageProductDependencies = (
 				EF552F222ED42F290040A583 /* SnapKit */,
-				EF552F242ED42F2E0040A583 /* Moya */,
 				EF47B9AE2ED5D909001D5E19 /* Pokemon */,
 			);
 			productName = PenpeerInterview;
@@ -135,6 +136,8 @@
 			);
 			name = PenpeerInterviewTests;
 			packageProductDependencies = (
+				EF3904C12ED5F7B70069ABF8 /* Pokemon */,
+				EF3904C92ED604A30069ABF8 /* Moya */,
 			);
 			productName = PenpeerInterviewTests;
 			productReference = EF552E4D2ED426FD0040A583 /* PenpeerInterviewTests.xctest */;
@@ -170,7 +173,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				EF552F1F2ED42EEF0040A583 /* XCRemoteSwiftPackageReference "SnapKit" */,
-				EF552F202ED42F160040A583 /* XCRemoteSwiftPackageReference "Moya" */,
+				EF3904C82ED6049D0069ABF8 /* XCRemoteSwiftPackageReference "Moya" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EF552E412ED426FC0040A583 /* Products */;
@@ -490,6 +493,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		EF3904C82ED6049D0069ABF8 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya";
+			requirement = {
+				kind = exactVersion;
+				version = 15.0.3;
+			};
+		};
 		EF552F1F2ED42EEF0040A583 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
@@ -498,17 +509,18 @@
 				version = 5.7.1;
 			};
 		};
-		EF552F202ED42F160040A583 /* XCRemoteSwiftPackageReference "Moya" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Moya/Moya";
-			requirement = {
-				kind = exactVersion;
-				version = 15.0.3;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		EF3904C12ED5F7B70069ABF8 /* Pokemon */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Pokemon;
+		};
+		EF3904C92ED604A30069ABF8 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF3904C82ED6049D0069ABF8 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
 		EF47B9AE2ED5D909001D5E19 /* Pokemon */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Pokemon;
@@ -517,11 +529,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EF552F1F2ED42EEF0040A583 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
-		};
-		EF552F242ED42F2E0040A583 /* Moya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EF552F202ED42F160040A583 /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = Moya;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

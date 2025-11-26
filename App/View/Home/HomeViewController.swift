@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Combine
+import Pokemon
 
 class HomeViewController: UIViewController {
 

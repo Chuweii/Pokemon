@@ -7,7 +7,6 @@
 
 import Foundation
 import Moya
-import Alamofire
 
 enum PokeAPIManager {
     case getPokemonList(limit: Int, offset: Int)

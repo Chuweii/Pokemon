@@ -7,24 +7,24 @@
 
 import Foundation
 
-struct Pokemon {
-    let id: Int
-    let name: String
-    let types: [PokemonType]
-    let imageUrl: String?
-    let sprites: PokemonImageSprites?
-    var isFavorited: Bool
+public struct Pokemon {
+    public let id: Int
+    public let name: String
+    public let types: [PokemonType]
+    public let imageUrl: String?
+    public let sprites: PokemonImageSprites?
+    public var isFavorited: Bool
 
-    var formattedNumber: String {
+    public var formattedNumber: String {
         return "#\(id)"
     }
 
-    var capitalizedName: String {
+    public var capitalizedName: String {
         return name.uppercased()
     }
 
     // Convert from API Response
-    init(from response: PokemonDetailResponse, isFavorited: Bool = false) {
+    public init(from response: PokemonDetailResponse, isFavorited: Bool = false) {
         self.id = response.id
         self.name = response.name
         self.types = response.types.map { PokemonType(name: $0.type.name) }
@@ -37,7 +37,7 @@ struct Pokemon {
     }
 
     // For mock data
-    init(id: Int, name: String, types: [PokemonType], imageUrl: String? = nil, isFavorited: Bool = false) {
+    public init(id: Int, name: String, types: [PokemonType], imageUrl: String? = nil, isFavorited: Bool = false) {
         self.id = id
         self.name = name
         self.types = types
@@ -47,15 +47,15 @@ struct Pokemon {
     }
 }
 
-struct PokemonType {
-    let name: String
+public struct PokemonType {
+    public let name: String
 
-    var displayName: String {
+    public var displayName: String {
         return name.capitalized
     }
 }
 
-struct PokemonImageSprites {
-    let frontDefault: String?
-    let frontShiny: String?
+public struct PokemonImageSprites {
+    public let frontDefault: String?
+    public let frontShiny: String?
 }

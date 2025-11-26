@@ -8,7 +8,7 @@
 import Foundation
 import Moya
 
-protocol PokeAPIRepositoryProtocol {
+public protocol PokeAPIRepositoryProtocol {
     func getPokemonList(limit: Int, offset: Int) async throws -> PokemonListResponse
     func getPokemonDetail(id: Int) async throws -> PokemonDetailResponse
     func getTypeList(limit: Int, offset: Int) async throws -> TypeListResponse
@@ -16,27 +16,29 @@ protocol PokeAPIRepositoryProtocol {
     func getRegionDetail(id: Int) async throws -> RegionDetailResponse
 }
 
-class PokeAPIRepository: PokeAPIRepositoryProtocol {
+public class PokeAPIRepository: PokeAPIRepositoryProtocol {
 
     private let provider = MoyaProvider<PokeAPIManager>()
 
-    func getPokemonList(limit: Int, offset: Int) async throws -> PokemonListResponse {
+    public init() {}
+
+    public func getPokemonList(limit: Int, offset: Int) async throws -> PokemonListResponse {
         return try await provider.async.request(.getPokemonList(limit: limit, offset: offset))
     }
 
-    func getPokemonDetail(id: Int) async throws -> PokemonDetailResponse {
+    public func getPokemonDetail(id: Int) async throws -> PokemonDetailResponse {
         return try await provider.async.request(.getPokemonDetail(id: id))
     }
 
-    func getTypeList(limit: Int, offset: Int) async throws -> TypeListResponse {
+    public func getTypeList(limit: Int, offset: Int) async throws -> TypeListResponse {
         return try await provider.async.request(.getTypeList(limit: limit, offset: offset))
     }
 
-    func getRegionList() async throws -> RegionListResponse {
+    public func getRegionList() async throws -> RegionListResponse {
         return try await provider.async.request(.getRegionList)
     }
 
-    func getRegionDetail(id: Int) async throws -> RegionDetailResponse {
+    public func getRegionDetail(id: Int) async throws -> RegionDetailResponse {
         return try await provider.async.request(.getRegionDetail(id: id))
     }
 }
