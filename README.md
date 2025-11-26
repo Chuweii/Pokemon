@@ -75,7 +75,6 @@ Pokemon/
 ## Dependencies
 
 - [Moya](https://github.com/Moya/Moya) - Network abstraction layer
-- [Kingfisher](https://github.com/onevcat/Kingfisher) - Image downloading and caching (if used)
 
 ## Getting Started
 
