@@ -8,19 +8,14 @@
 import SwiftUI
 
 struct PokemonListView: View {
-    @StateObject private var viewModel: PokemonListViewModel
     @StateObject private var coordinator: PokemonListCoordinator
+    @StateObject private var viewModel: PokemonListViewModel
     @Environment(\.dismiss) private var dismiss
 
-    init(
-        viewModel: PokemonListViewModel? = nil,
-        coordinator: PokemonListCoordinator? = nil
-    ) {
-        let coord = coordinator ?? PokemonListCoordinator()
-        _coordinator = StateObject(wrappedValue: coord)
-
-        let vm = viewModel ?? PokemonListViewModel(coordinator: coord)
-        _viewModel = StateObject(wrappedValue: vm)
+    init() {
+        let coordinator = PokemonListCoordinator()
+        _coordinator = StateObject(wrappedValue: coordinator)
+        _viewModel = StateObject(wrappedValue: PokemonListViewModel(coordinator: coordinator))
     }
 
     var body: some View {
