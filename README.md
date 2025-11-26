@@ -70,7 +70,7 @@ Pokemon/
 - **Architecture**: MVVM-C
 - **Networking**: Moya
 - **Testing**: Swift Testing Framework
-- **Minimum iOS Version**: iOS 16.0+
+- **Minimum iOS Version**: iOS 17.0+
 
 ## Dependencies
 
@@ -82,7 +82,7 @@ Pokemon/
 
 - Xcode 15.0+
 - Swift 5.9+
-- iOS 16.0+
+- iOS 17.0+
 
 ### Installation
 
