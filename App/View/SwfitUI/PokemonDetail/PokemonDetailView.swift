@@ -328,34 +328,35 @@ struct StatBar: View {
     let maxValue: Int
 
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 12) {
             // Stat name
             Text(name)
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.white.opacity(0.7))
-                .frame(width: 60, alignment: .leading)
+                .foregroundColor(.white.opacity(0.9))
+                .frame(width: 50, alignment: .leading)
 
-            // Progress bar
+            // Progress bar with value inside
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     // Background bar
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.white.opacity(0.3))
-                        .frame(height: 8)
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.white.opacity(0.2))
+                        .frame(height: 20)
 
-                    // Filled bar
-                    RoundedRectangle(cornerRadius: 4)
+                    // Filled bar (from left to right)
+                    RoundedRectangle(cornerRadius: 10)
                         .fill(statColor)
-                        .frame(width: geometry.size.width * progress, height: 8)
+                        .frame(width: geometry.size.width * progress, height: 20)
+                        .animation(.easeInOut(duration: 0.3), value: progress)
+
+                    // Value text in the center of the entire bar
+                    Text("\(value)/\(maxValue)")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: geometry.size.width, height: 20)
                 }
             }
-            .frame(height: 8)
-
-            // Value text
-            Text("\(value)/\(maxValue)")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.white)
-                .frame(width: 70, alignment: .trailing)
+            .frame(height: 20)
         }
     }
 

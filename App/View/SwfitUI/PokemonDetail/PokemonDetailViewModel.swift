@@ -54,7 +54,8 @@ class PokemonDetailViewModel: ObservableObject {
     var statsList: [(name: String, value: Int, maxValue: Int)] {
         guard let stats = pokemon.stats else { return [] }
 
-        return stats.map { stat in
+        // Filter to only show HP, ATK, DEF, SPD
+        let filteredStats = stats.compactMap { stat -> (name: String, value: Int, maxValue: Int)? in
             let displayName: String
             switch stat.stat.name {
             case "hp":
@@ -63,18 +64,18 @@ class PokemonDetailViewModel: ObservableObject {
                 displayName = "ATK"
             case "defense":
                 displayName = "DEF"
-            case "special-attack":
-                displayName = "SP.ATK"
-            case "special-defense":
-                displayName = "SP.DEF"
             case "speed":
                 displayName = "SPD"
             default:
-                displayName = stat.stat.name.uppercased()
+                return nil // Skip other stats
             }
 
             return (name: displayName, value: stat.baseStat, maxValue: 255)
         }
+
+        // Sort to ensure consistent order: HP, ATK, DEF, SPD
+        let order = ["HP", "ATK", "DEF", "SPD"]
+        return filteredStats.sorted { order.firstIndex(of: $0.name) ?? 0 < order.firstIndex(of: $1.name) ?? 0 }
     }
 
     // MARK: - Actions
