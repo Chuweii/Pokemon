@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Combine
+import SwiftUI
 
 class HomeViewController: UIViewController {
 
@@ -30,12 +31,16 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupBinding()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
+
         Task {
             await viewModel.loadAllData()
         }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Refresh favorite status when returning from detail view
+        viewModel.refreshFavoriteStatus()
     }
     
     // MARK: - Bindings
@@ -77,6 +82,17 @@ class HomeViewController: UIViewController {
             .compactMap { $0 }
             .sink { errorMessage in
                 print("Error: \(errorMessage)")
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$shouldShowPokemonDetailView
+            .filter { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let pokemon = self?.viewModel.selectedPokemon else { return }
+                let pokemonDetailView = UIHostingController(rootView: PokemonDetailView(pokemon: pokemon))
+                self?.navigationController?.pushViewController(pokemonDetailView, animated: true)
+                self?.viewModel.shouldShowPokemonDetailView = false
             }
             .store(in: &cancellables)
     }
@@ -399,7 +415,7 @@ extension HomeViewController: UICollectionViewDelegate {
         if collectionView.tag == 1 {
             let pokemon = viewModel.featuredPokemons[indexPath.item]
             print("Selected Pokemon: \(pokemon.name)")
-            viewModel.didClickPokemonItems()
+            viewModel.didClickPokemonItems(pokemon)
         }
     }
 }

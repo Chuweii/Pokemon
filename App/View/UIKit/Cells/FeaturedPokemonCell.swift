@@ -67,9 +67,8 @@ class FeaturedPokemonCell: UICollectionViewCell {
         let button = UIButton(type: .custom)
         // Create a larger touch area
         let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
-        button.setImage(UIImage(systemName: "star", withConfiguration: config), for: .normal)
-        button.setImage(UIImage(systemName: "star.fill", withConfiguration: config), for: .selected)
-        button.tintColor = .systemYellow
+        button.setImage(UIImage(named: "unfavorite_icon", in: nil, with: config), for: .normal)
+        button.setImage(UIImage(named: "favorite_icon", in: nil, with: config), for: .selected)
         return button
     }()
 
@@ -143,9 +142,9 @@ class FeaturedPokemonCell: UICollectionViewCell {
         largeImageView.isHidden = true // Hide the large image
 
         favoriteButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-12)
+            make.trailing.equalToSuperview().offset(-20)
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(40)
+            make.width.height.equalTo(30)
         }
 
         pokeballImageView.snp.makeConstraints { make in
@@ -218,8 +217,8 @@ class FeaturedPokemonCell: UICollectionViewCell {
         }
     }
 
-    private func createTypeLabel(for type: PokemonType) -> UILabel {
-        let label = UILabel()
+    private func createTypeLabel(for type: PokemonType) -> PaddedLabel {
+        let label = PaddedLabel()
         label.text = type.displayName
         label.font = .systemFont(ofSize: 12, weight: .semibold)
         label.textColor = .white
@@ -227,11 +226,11 @@ class FeaturedPokemonCell: UICollectionViewCell {
         label.backgroundColor = getTypeColor(for: type.name)
         label.layer.cornerRadius = 8
         label.clipsToBounds = true
+        label.padding = UIEdgeInsets(top: 4, left: 12, bottom: 4, right: 12)
 
-        // Set padding
+        // Set fixed height
         label.snp.makeConstraints { make in
             make.height.equalTo(24)
-            make.width.greaterThanOrEqualTo(60)
         }
 
         return label
@@ -249,5 +248,34 @@ class FeaturedPokemonCell: UICollectionViewCell {
         case "flying": return UIColor(red: 0.66, green: 0.56, blue: 0.95, alpha: 1.0)
         default: return .systemGray
         }
+    }
+}
+
+// MARK: - PaddedLabel
+class PaddedLabel: UILabel {
+    var padding = UIEdgeInsets.zero
+
+    override func drawText(in rect: CGRect) {
+        super.drawText(in: rect.inset(by: padding))
+    }
+
+    override var intrinsicContentSize: CGSize {
+        let size = super.intrinsicContentSize
+        return CGSize(
+            width: size.width + padding.left + padding.right,
+            height: size.height + padding.top + padding.bottom
+        )
+    }
+
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+        let adjustedSize = CGSize(
+            width: size.width - padding.left - padding.right,
+            height: size.height - padding.top - padding.bottom
+        )
+        let labelSize = super.sizeThatFits(adjustedSize)
+        return CGSize(
+            width: labelSize.width + padding.left + padding.right,
+            height: labelSize.height + padding.top + padding.bottom
+        )
     }
 }

@@ -77,11 +77,21 @@ struct HomeViewModelTests {
             pokeAPIRepository: pokeAPIRepository
         )
 
+        let mockPokemon = await Pokemon(
+            id: 1,
+            name: "bulbasaur",
+            types: [PokemonType(name: "grass")],
+            imageUrl: "https://example.com/bulbasaur.png",
+            isFavorited: false
+        )
+
         // When
-        await viewModel.didClickPokemonItems()
+        await viewModel.didClickPokemonItems(mockPokemon)
 
         // Then
         #expect(viewModel.shouldShowPokemonDetailView == true)
+        await #expect(viewModel.selectedPokemon?.id == 1)
+        await #expect(viewModel.selectedPokemon?.name == "bulbasaur")
     }
 
     @Test func clickFavoriteButtonAddToFavorite() async throws {

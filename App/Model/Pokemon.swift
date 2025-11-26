@@ -13,6 +13,9 @@ struct Pokemon {
     let types: [PokemonType]
     let imageUrl: String?
     let sprites: PokemonImageSprites?
+    let height: Int?
+    let weight: Int?
+    let stats: [PokemonStat]?
     var isFavorited: Bool
 
     var formattedNumber: String {
@@ -33,16 +36,22 @@ struct Pokemon {
             frontDefault: response.sprites.frontDefault,
             frontShiny: response.sprites.frontShiny
         )
+        self.height = response.height
+        self.weight = response.weight
+        self.stats = response.stats
         self.isFavorited = isFavorited
     }
 
     // For mock data
-    init(id: Int, name: String, types: [PokemonType], imageUrl: String? = nil, isFavorited: Bool = false) {
+    init(id: Int, name: String, types: [PokemonType], imageUrl: String? = nil, height: Int? = nil, weight: Int? = nil, stats: [PokemonStat]? = nil, isFavorited: Bool = false) {
         self.id = id
         self.name = name
         self.types = types
         self.imageUrl = imageUrl
         self.sprites = nil
+        self.height = height
+        self.weight = weight
+        self.stats = stats
         self.isFavorited = isFavorited
     }
 }

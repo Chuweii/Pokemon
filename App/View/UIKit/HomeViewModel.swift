@@ -17,6 +17,7 @@ class HomeViewModel {
     @Published var errorMessage: String? = nil
     @Published var shouldShowPokemonListView = false
     @Published var shouldShowPokemonDetailView = false
+    @Published var selectedPokemon: Pokemon? = nil
     
     // MARK: - Init
     let pokeAPIRepository: PokeAPIRepositoryProtocol
@@ -120,8 +121,9 @@ class HomeViewModel {
         print("Regions see more tapped")
     }
     
-    func didClickPokemonItems() {
+    func didClickPokemonItems(_ pokemon: Pokemon) {
         shouldShowPokemonDetailView = true
+        selectedPokemon = pokemon
     }
     
     func didClickFavoriteButton(for pokemonId: Int) {
@@ -143,5 +145,13 @@ class HomeViewModel {
 
     private func isFavorited(pokemonId: Int) -> Bool {
         return favoriteRepository.isFavorited(pokemonId: pokemonId)
+    }
+
+    func refreshFavoriteStatus() {
+        for index in featuredPokemons.indices {
+            let pokemonId = featuredPokemons[index].id
+            let isFavorited = favoriteRepository.isFavorited(pokemonId: pokemonId)
+            featuredPokemons[index].isFavorited = isFavorited
+        }
     }
 }
