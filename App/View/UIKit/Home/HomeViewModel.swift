@@ -13,7 +13,6 @@ class HomeViewModel {
     @Published var featuredPokemons: [Pokemon] = []
     @Published var types: [String] = []
     @Published var regions: [Region] = []
-    @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
     @Published var shouldShowPokemonListView = false
     @Published var shouldShowPokemonDetailView = false
@@ -130,26 +129,26 @@ class HomeViewModel {
     }
     
     // MARK: - Favorite Management
-    private func toggleFavorite(for pokemonId: Int) {
-        guard let index = featuredPokemons.firstIndex(where: { $0.id == pokemonId }) else { return }
+    private func toggleFavorite(for pokemonID: Int) {
+        guard let index = featuredPokemons.firstIndex(where: { $0.id == pokemonID }) else { return }
 
         // Toggle in FavoriteStorageRepository and get new state
-        let newState = favoriteRepository.toggleFavorite(pokemonId: pokemonId)
+        let newState = favoriteRepository.toggleFavorite(pokemonId: pokemonID)
 
         // Update local data
         featuredPokemons[index].isFavorited = newState
 
-        print("Toggled favorite for Pokemon #\(pokemonId): \(newState)")
+        print("Toggled favorite for Pokemon #\(pokemonID): \(newState)")
     }
 
-    private func isFavorited(pokemonId: Int) -> Bool {
-        return favoriteRepository.isFavorited(pokemonID: pokemonId)
+    private func isFavorited(pokemonID: Int) -> Bool {
+        return favoriteRepository.isFavorited(pokemonID: pokemonID)
     }
 
     func refreshFavoriteStatus() {
         for index in featuredPokemons.indices {
-            let pokemonId = featuredPokemons[index].id
-            let isFavorited = favoriteRepository.isFavorited(pokemonID: pokemonId)
+            let pokemonID = featuredPokemons[index].id
+            let isFavorited = favoriteRepository.isFavorited(pokemonID: pokemonID)
             featuredPokemons[index].isFavorited = isFavorited
         }
     }
