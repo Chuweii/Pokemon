@@ -24,7 +24,7 @@ class FakeFavoriteStorageRepository: FavoriteStorageRepositoryProtocol {
         self.favorites = initialFavorites
     }
     
-    func getFavoritePokemonIds() -> Set<Int> {
+    func getFavoritePokemonIDs() -> Set<Int> {
         didCallGetFavoritePokemonIds = true
         return favorites
     }
@@ -34,23 +34,23 @@ class FakeFavoriteStorageRepository: FavoriteStorageRepositoryProtocol {
         return favorites.contains(pokemonID)
     }
 
-    func addFavorite(pokemonId: Int) {
+    func addFavorite(pokemonID: Int) {
         didCallAddFavorite = true
-        favorites.insert(pokemonId)
+        favorites.insert(pokemonID)
     }
 
-    func removeFavorite(pokemonId: Int) {
+    func removeFavorite(pokemonID: Int) {
         didCallRemoveFavorite = true
-        favorites.remove(pokemonId)
+        favorites.remove(pokemonID)
     }
 
-    func toggleFavorite(pokemonId: Int) -> Bool {
+    func toggleFavorite(pokemonID: Int) -> Bool {
         didCallToggleFavorite = true
-        if favorites.contains(pokemonId) {
-            favorites.remove(pokemonId)
+        if favorites.contains(pokemonID) {
+            favorites.remove(pokemonID)
             return false
         } else {
-            favorites.insert(pokemonId)
+            favorites.insert(pokemonID)
             return true
         }
     }

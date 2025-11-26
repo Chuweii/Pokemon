@@ -8,11 +8,11 @@
 import Foundation
 
 protocol FavoriteStorageRepositoryProtocol {
-    func getFavoritePokemonIds() -> Set<Int>
+    func getFavoritePokemonIDs() -> Set<Int>
     func isFavorited(pokemonID: Int) -> Bool
-    func addFavorite(pokemonId: Int)
-    func removeFavorite(pokemonId: Int)
-    func toggleFavorite(pokemonId: Int) -> Bool
+    func addFavorite(pokemonID: Int)
+    func removeFavorite(pokemonID: Int)
+    func toggleFavorite(pokemonID: Int) -> Bool
 }
 
 class FavoriteStorageRepository: FavoriteStorageRepositoryProtocol {
@@ -25,23 +25,23 @@ class FavoriteStorageRepository: FavoriteStorageRepositoryProtocol {
         self.storage = storage
     }
 
-    func getFavoritePokemonIds() -> Set<Int> {
-        return storage.getFavoritePokemonIds()
+    func getFavoritePokemonIDs() -> Set<Int> {
+        return storage.getFavoritePokemonIDs()
     }
 
     func isFavorited(pokemonID: Int) -> Bool {
-        return storage.isFavorited(pokemonId: pokemonID)
+        return storage.isFavorited(pokemonID: pokemonID)
     }
 
-    func addFavorite(pokemonId: Int) {
-        storage.addFavorite(pokemonId: pokemonId)
+    func addFavorite(pokemonID: Int) {
+        storage.addFavorite(pokemonID: pokemonID)
     }
 
-    func removeFavorite(pokemonId: Int) {
-        storage.removeFavorite(pokemonId: pokemonId)
+    func removeFavorite(pokemonID: Int) {
+        storage.removeFavorite(pokemonID: pokemonID)
     }
 
-    func toggleFavorite(pokemonId: Int) -> Bool {
-        return storage.toggleFavorite(pokemonId: pokemonId)
+    func toggleFavorite(pokemonID: Int) -> Bool {
+        return storage.toggleFavorite(pokemonID: pokemonID)
     }
 }

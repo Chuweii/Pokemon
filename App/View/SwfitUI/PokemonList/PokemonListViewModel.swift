@@ -111,7 +111,7 @@ class PokemonListViewModel: ObservableObject {
         guard let index = pokemons.firstIndex(where: { $0.id == pokemonId }) else { return }
 
         // Toggle in FavoriteStorageRepository and get new state
-        let newState = favoriteRepository.toggleFavorite(pokemonId: pokemonId)
+        let newState = favoriteRepository.toggleFavorite(pokemonID: pokemonId)
 
         // Update local data
         pokemons[index].isFavorited = newState

@@ -83,7 +83,7 @@ class PokemonDetailViewModel: ObservableObject {
     }
     
     private func toggleFavorite() {
-        let newState = favoriteRepository.toggleFavorite(pokemonId: pokemon.id)
+        let newState = favoriteRepository.toggleFavorite(pokemonID: pokemon.id)
         pokemon.isFavorited = newState
     }
 }

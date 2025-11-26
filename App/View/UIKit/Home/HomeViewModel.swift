@@ -133,7 +133,7 @@ class HomeViewModel {
         guard let index = featuredPokemons.firstIndex(where: { $0.id == pokemonID }) else { return }
 
         // Toggle in FavoriteStorageRepository and get new state
-        let newState = favoriteRepository.toggleFavorite(pokemonId: pokemonID)
+        let newState = favoriteRepository.toggleFavorite(pokemonID: pokemonID)
 
         // Update local data
         featuredPokemons[index].isFavorited = newState

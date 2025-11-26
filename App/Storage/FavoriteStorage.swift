@@ -8,11 +8,11 @@
 import Foundation
 
 protocol FavoriteStorageProtocol {
-    func getFavoritePokemonIds() -> Set<Int>
-    func isFavorited(pokemonId: Int) -> Bool
-    func addFavorite(pokemonId: Int)
-    func removeFavorite(pokemonId: Int)
-    func toggleFavorite(pokemonId: Int) -> Bool
+    func getFavoritePokemonIDs() -> Set<Int>
+    func isFavorited(pokemonID: Int) -> Bool
+    func addFavorite(pokemonID: Int)
+    func removeFavorite(pokemonID: Int)
+    func toggleFavorite(pokemonID: Int) -> Bool
     func clearAllFavorites()
 }
 
@@ -26,7 +26,7 @@ class FavoriteStorage: FavoriteStorageProtocol {
     }
 
     // Get all favorite Pokemon IDs
-    func getFavoritePokemonIds() -> Set<Int> {
+    func getFavoritePokemonIDs() -> Set<Int> {
         if let array = userDefaults.array(forKey: favoritesKey) as? [Int] {
             let favorites = Set(array)
             print("Loaded favorites from UserDefaults: \(array)")
@@ -37,33 +37,33 @@ class FavoriteStorage: FavoriteStorageProtocol {
     }
 
     // Check if a Pokemon is favorited
-    func isFavorited(pokemonId: Int) -> Bool {
-        return getFavoritePokemonIds().contains(pokemonId)
+    func isFavorited(pokemonID: Int) -> Bool {
+        return getFavoritePokemonIDs().contains(pokemonID)
     }
 
     // Add a Pokemon to favorites
-    func addFavorite(pokemonId: Int) {
-        var favorites = getFavoritePokemonIds()
-        favorites.insert(pokemonId)
-        print("Adding Pokemon #\(pokemonId) to favorites")
+    func addFavorite(pokemonID: Int) {
+        var favorites = getFavoritePokemonIDs()
+        favorites.insert(pokemonID)
+        print("Adding Pokemon #\(pokemonID) to favorites")
         saveFavorites(favorites)
     }
 
     // Remove a Pokemon from favorites
-    func removeFavorite(pokemonId: Int) {
-        var favorites = getFavoritePokemonIds()
-        favorites.remove(pokemonId)
-        print("Removing Pokemon #\(pokemonId) from favorites")
+    func removeFavorite(pokemonID: Int) {
+        var favorites = getFavoritePokemonIDs()
+        favorites.remove(pokemonID)
+        print("Removing Pokemon #\(pokemonID) from favorites")
         saveFavorites(favorites)
     }
 
     // Toggle favorite status
-    func toggleFavorite(pokemonId: Int) -> Bool {
-        if isFavorited(pokemonId: pokemonId) {
-            removeFavorite(pokemonId: pokemonId)
+    func toggleFavorite(pokemonID: Int) -> Bool {
+        if isFavorited(pokemonID: pokemonID) {
+            removeFavorite(pokemonID: pokemonID)
             return false
         } else {
-            addFavorite(pokemonId: pokemonId)
+            addFavorite(pokemonID: pokemonID)
             return true
         }
     }
