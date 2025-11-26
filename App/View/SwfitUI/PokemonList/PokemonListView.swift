@@ -8,8 +8,20 @@
 import SwiftUI
 
 struct PokemonListView: View {
-    @StateObject private var viewModel = PokemonListViewModel()
+    @StateObject private var viewModel: PokemonListViewModel
+    @StateObject private var coordinator: PokemonListCoordinator
     @Environment(\.dismiss) private var dismiss
+
+    init(
+        viewModel: PokemonListViewModel? = nil,
+        coordinator: PokemonListCoordinator? = nil
+    ) {
+        let coord = coordinator ?? PokemonListCoordinator()
+        _coordinator = StateObject(wrappedValue: coord)
+
+        let vm = viewModel ?? PokemonListViewModel(coordinator: coord)
+        _viewModel = StateObject(wrappedValue: vm)
+    }
 
     var body: some View {
         ZStack {
@@ -29,6 +41,18 @@ struct PokemonListView: View {
             }
         }
         .navigationBarHidden(true)
+        .background(
+            NavigationLink(
+                destination: coordinator.selectedPokemon.map { PokemonDetailView(pokemon: $0) },
+                isActive: Binding(
+                    get: { coordinator.selectedPokemon != nil },
+                    set: { if !$0 { coordinator.selectedPokemon = nil } }
+                )
+            ) {
+                EmptyView()
+            }
+            .hidden()
+        )
         .task {
             // Only load initial data if no data exists
             if viewModel.pokemons.isEmpty {
@@ -47,6 +71,7 @@ extension PokemonListView {
         HStack {
             // Back button
             Button(action: {
+                viewModel.didTapBack()
                 dismiss()
             }) {
                 Image(systemName: "chevron.left")
@@ -96,7 +121,7 @@ extension PokemonListView {
                 .listRowBackground(Color.clear)
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    viewModel.didClickPokemonListRow(pokemon)
+                    viewModel.didSelectPokemon(pokemon)
                 }
                 .onAppear {
                     Task {
@@ -119,18 +144,6 @@ extension PokemonListView {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .background(
-            NavigationLink(
-                destination: viewModel.selectedPokemon.map { PokemonDetailView(pokemon: $0) },
-                isActive: Binding(
-                    get: { viewModel.selectedPokemon != nil },
-                    set: { if !$0 { viewModel.selectedPokemon = nil } }
-                )
-            ) {
-                EmptyView()
-            }
-            .hidden()
-        )
     }
 }
 

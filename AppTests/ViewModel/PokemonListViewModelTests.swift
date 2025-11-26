@@ -77,35 +77,30 @@ struct PokemonListViewModelTests {
     @Test("When user clicked pokemon row, then it should navigate to PokemonDetailView")
     func clickPokemonListRow() async throws {
         // Given
+        let mockCoordinator = MockPokemonListCoordinator()
         let fakePokeAPIRepository = FakePokeAPIRepository()
         let fakeFavoriteRepository = FakeFavoriteStorageRepository(initialFavorites: [1])
 
-        // Mock successful response
-        let mockListResponse = PokemonListResponse(
-            count: 1,
-            next: "https://pokeapi.co/api/v2/pokemon?offset=20&limit=20",
-            previous: nil,
-            results: [
-                PokemonListItem(name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/")
-            ]
+        let mockPokemon = Pokemon(
+            id: 25,
+            name: "pikachu",
+            types: [PokemonType(name: "electric")],
+            imageUrl: "https://example.com/pikachu.png"
         )
-
-        let mockDetailResponse = createMockPokemonDetail(id: 1, name: "bulbasaur", types: ["grass", "poison"])
-
-        fakePokeAPIRepository.getPokemonListResult = .success(mockListResponse)
-        fakePokeAPIRepository.getPokemonDetailResult = .success(mockDetailResponse)
 
         let viewModel = PokemonListViewModel(
             pokeAPIRepository: fakePokeAPIRepository,
-            favoriteRepository: fakeFavoriteRepository
+            favoriteRepository: fakeFavoriteRepository,
+            coordinator: mockCoordinator
         )
 
         // When
-        await viewModel.loadInitialData()
-        await viewModel.didClickPokemonListRow(makeMockPokemon())
-        
+        viewModel.didSelectPokemon(mockPokemon)
+
         // Then
-        #expect(viewModel.selectedPokemon != nil)
+        #expect(mockCoordinator.didCallShowPokemonDetail == true)
+        #expect(mockCoordinator.selectedPokemon?.id == 25)
+        #expect(mockCoordinator.selectedPokemon?.name == "pikachu")
     }
     
     @Test("When user scroll to bottom, then it should load more")

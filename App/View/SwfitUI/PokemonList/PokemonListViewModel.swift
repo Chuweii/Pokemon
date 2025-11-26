@@ -15,23 +15,25 @@ class PokemonListViewModel: ObservableObject {
     @Published var isLoadingMore: Bool = false
     @Published var errorMessage: String? = nil
     @Published var hasMoreData: Bool = true
-    @Published var selectedPokemon: Pokemon?
 
     // MARK: - Private Properties
     private var currentOffset: Int = 0
     private let pageSize: Int = 20
 
-    // MARK: - Repositories
+    // MARK: - Dependencies
     let pokeAPIRepository: PokeAPIRepositoryProtocol
     let favoriteRepository: FavoriteStorageRepositoryProtocol
+    let coordinator: PokemonListCoordinating
 
     // MARK: - Init
     init(
         pokeAPIRepository: PokeAPIRepositoryProtocol = PokeAPIRepository(),
-        favoriteRepository: FavoriteStorageRepositoryProtocol = FavoriteStorageRepository.shared
+        favoriteRepository: FavoriteStorageRepositoryProtocol = FavoriteStorageRepository.shared,
+        coordinator: PokemonListCoordinating = PokemonListCoordinator()
     ) {
         self.pokeAPIRepository = pokeAPIRepository
         self.favoriteRepository = favoriteRepository
+        self.coordinator = coordinator
     }
 
     // MARK: - Data Loading
@@ -114,10 +116,6 @@ class PokemonListViewModel: ObservableObject {
         // Update local data
         pokemons[index].isFavorited = newState
     }
-    
-    func didClickPokemonListRow(_ pokemon: Pokemon) {
-        selectedPokemon = pokemon
-    }
 
     func refreshFavoriteStatus() {
         for index in pokemons.indices {
@@ -125,5 +123,14 @@ class PokemonListViewModel: ObservableObject {
             let isFavorited = favoriteRepository.isFavorited(pokemonID: pokemonID)
             pokemons[index].isFavorited = isFavorited
         }
+    }
+
+    // MARK: - Navigation Actions
+    func didSelectPokemon(_ pokemon: Pokemon) {
+        coordinator.showPokemonDetail(pokemon: pokemon)
+    }
+
+    func didTapBack() {
+        coordinator.dismiss()
     }
 }
