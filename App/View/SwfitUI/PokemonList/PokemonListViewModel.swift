@@ -48,14 +48,6 @@ class PokemonListViewModel: ObservableObject {
         await loadPokemons()
         isLoading = false
     }
-    
-    func onReachedBottom(currentItem: Pokemon) async {
-        // Check if need to load more data
-        guard let lastPokemon = pokemons.last else { return }
-        guard currentItem.id == lastPokemon.id else { return }
-        guard !isLoadingMore && hasMoreData else { return }
-        await loadMoreData()
-    }
 
     private func loadMoreData() async {
         guard !isLoadingMore && hasMoreData else { return }
@@ -111,6 +103,14 @@ class PokemonListViewModel: ObservableObject {
 
         // Update local data
         pokemons[index].isFavorited = newState
+    }
+    
+    func onReachedBottom(currentItem: Pokemon) async {
+        // Check if need to load more data
+        guard let lastPokemon = pokemons.last else { return }
+        guard currentItem.id == lastPokemon.id else { return }
+        guard !isLoadingMore && hasMoreData else { return }
+        await loadMoreData()
     }
 
     func refreshFavoriteStatus() {
