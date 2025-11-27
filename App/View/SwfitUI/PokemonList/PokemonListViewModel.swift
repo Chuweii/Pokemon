@@ -54,10 +54,6 @@ class PokemonListViewModel: ObservableObject {
         guard let lastPokemon = pokemons.last else { return }
         guard currentItem.id == lastPokemon.id else { return }
         guard !isLoadingMore && hasMoreData else { return }
-        await loadMoreDataIfNeeded()
-    }
-
-    func loadMoreDataIfNeeded() async {
         await loadMoreData()
     }
 
