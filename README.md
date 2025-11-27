@@ -42,8 +42,8 @@ Pokemon/
 │   │   │       ├── PokemonListView.swift        # Pokemon list UI
 │   │   │       ├── PokemonListViewModel.swift   # Pokemon list logic
 │   │   │       ├── PokemonListCoordinator.swift # Pokemon list navigation coordinator
-│   │   │       ├── PokemonDetailView.swift      # Pokemon list UI
-│   │   │       └── PokemonDetailiewModel.swift  # Pokemon list logic
+│   │   │       ├── PokemonDetailView.swift      # Pokemon detail UI
+│   │   │       └── PokemonDetailViewModel.swift  # Pokemon detail logic
 │   │   └── UIKit/
 │   │       └── HomeViewController.swift      # Home screen (UIKit)
 │   ├── Repository/

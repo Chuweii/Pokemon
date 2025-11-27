@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		EF552F232ED42F290040A583 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EF552F222ED42F290040A583 /* SnapKit */; };
 		EF552F252ED42F2E0040A583 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = EF552F242ED42F2E0040A583 /* Moya */; };
+		EFDC67E92ED7F60C007FEFEE /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = EFDC67E82ED7F60C007FEFEE /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,6 +25,7 @@
 /* Begin PBXFileReference section */
 		EF552E402ED426FC0040A583 /* PenpeerInterview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PenpeerInterview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF552E4D2ED426FD0040A583 /* PenpeerInterviewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PenpeerInterviewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFDC67E82ED7F60C007FEFEE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -62,6 +64,7 @@
 		EF552E372ED426FC0040A583 = {
 			isa = PBXGroup;
 			children = (
+				EFDC67E82ED7F60C007FEFEE /* README.md */,
 				EF552E422ED426FC0040A583 /* App */,
 				EF552E502ED426FD0040A583 /* AppTests */,
 				EF552E412ED426FC0040A583 /* Products */,
@@ -175,6 +178,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFDC67E92ED7F60C007FEFEE /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
