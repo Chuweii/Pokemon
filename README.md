@@ -224,12 +224,5 @@ This project is created for educational purposes.
 - [PokéAPI](https://pokeapi.co/) for providing the Pokémon data
 - [Moya](https://github.com/Moya/Moya) for networking abstraction
 
-## Contact
-
-Wei Chu - [@your-twitter](https://twitter.com/yourhandle)
-
-Project Link: [https://github.com/yourusername/Pokemon](https://github.com/yourusername/Pokemon)
-
----
 
 Made with ❤️ using SwiftUI and MVVM-C
